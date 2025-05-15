@@ -6,16 +6,15 @@ with open(os.path.join(os.path.dirname(__file__), 'README.md'), "r") as fh:
     readme = fh.read()
 
 setuptools.setup(
-    name='oai_repo',
+    name='aio_oai_repo',
     version="0.4.2",
     license='Apache License 2.0',
     description='OAI-PMH Repository Server',
     long_description=readme,
     long_description_content_type="text/markdown",
-    author="Nate Collins",
-    author_email="npcollins@gmail.com",
-    url='https://github.com/MSU-Libraries/oai_repo',
+    url='https://github.com/Rijksmuseum/aio_oai_repo',
     project_urls={
+        "Forked from": "https://github.com/MSU-Libraries/oai_repo"
         "Documentation": "https://msu-libraries.github.io/oai_repo/",
     },
     classifiers=[

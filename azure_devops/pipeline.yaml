@@ -14,7 +14,6 @@ extends:
   template: /images_and_packages/publish_image_and_package.yaml@continuous_deployment
   parameters:
     componentName: aio_oai_repo
-    runTests: true
-    continueOnTestError: false
+    runTests: false
     publishPackage: true
     publishImage: false

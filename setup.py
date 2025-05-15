@@ -35,5 +35,6 @@ setuptools.setup(
         "lxml >= 4.9",
         "requests >= 2.31",
         "validators >= 0.22",
+        "twine"
     ]
 )

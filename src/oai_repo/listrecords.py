@@ -50,9 +50,9 @@ class ListRecordsRequest(OAIRequest):
 
 class ListRecordsResponse(OAIResponse):
     """Generate a resposne for the ListRecords verb"""
-    def body(self) -> etree.Element:
+    async def body(self) -> etree.Element:
         """Response body"""
-        mdformats = self.repository.data.get_metadata_formats()
+        mdformats = await self.repository.data.get_metadata_formats()
         if self.request.metadata_prefix not in [mdf.metadata_prefix for mdf in mdformats]:
             raise OAIErrorCannotDisseminateFormat(
                 "The given metadataPrefix not suported by this repository"
@@ -63,10 +63,10 @@ class ListRecordsResponse(OAIResponse):
             if self.request.token.cursor is not None else 0
         )
 
-        identifiers, new_size, state = self.repository.data.list_identifiers(
+        identifiers, new_size, state = await self.repository.data.list_identifiers(
             self.request.metadata_prefix,
-            self.repository.valid_date(self.request.filter_from),
-            self.repository.valid_date(self.request.filter_until),
+            await self.repository.valid_date(self.request.filter_from),
+            await self.repository.valid_date(self.request.filter_until),
             self.request.filter_set,
             cursor
         )
@@ -84,7 +84,7 @@ class ListRecordsResponse(OAIResponse):
         xmlb = etree.Element("ListRecords")
         # populate response body with record headers
         for identifier in identifiers:
-            record(self.repository, identifier, self.request.metadata_prefix, xmlb)
+            await record(self.repository, identifier, self.request.metadata_prefix, xmlb)
 
         # append a resumptionToken if needed
         if new_size > self.repository.data.limit:

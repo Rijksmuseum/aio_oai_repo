@@ -19,8 +19,8 @@ from .interface import DataInterface
 
 class VerbClasses(NamedTuple):
     """Named access to verb classes"""
-    request: OAIRequest
-    response: OAIResponse
+    request: type[OAIRequest]
+    response: type[OAIResponse]
 
 VERBS = {
     'GetRecord': VerbClasses(GetRecordRequest, GetRecordResponse),
@@ -45,7 +45,7 @@ class OAIRepository:
         """
         self.data = data
 
-    def process(self, request: dict) -> OAIResponse:
+    async def process(self, request_arguments: dict) -> OAIResponse:
         """
         Given request arguments, route to appropriate action, process the
         request and return a response.
@@ -58,8 +58,8 @@ class OAIRepository:
             OAIRepoExternalException: When resp creation fails due to an external API call.
         """
         try:
-            request = self.create_request(request)
-            response = self.create_response(request)
+            request = self.create_request(request_arguments)
+            response = await self.create_response(request)
         except OAIError as exc:
             response = OAIErrorResponse(self, exc)
         return response
@@ -77,11 +77,11 @@ class OAIRepository:
                 "The value of the 'verb' argument in the request is not legal."
             ) from None
 
-    def create_response(self, request: OAIRequest) -> OAIResponse:
+    async def create_response(self, request: OAIRequest) -> OAIResponse:
         """Given a request, create an appropriate OAI response object"""
-        return VERBS[request.verb].response(self, request)
+        return await VERBS[request.verb].response(self, request).initialize()
 
-    def valid_date(self, datestr: str):
+    async def valid_date(self, datestr: str):
         """
         Parse an argument provided datestr into a datetime object;
         Args:
@@ -95,7 +95,8 @@ class OAIRepository:
         """
         allowed_datefmts = ["%Y-%m-%d"]
 
-        if self.data.get_identify().granularity == "YYYY-MM-DDThh:mm:ssZ":
+        identify = await self.data.get_identify()
+        if identify.granularity == "YYYY-MM-DDThh:mm:ssZ":
             allowed_datefmts.append("%Y-%m-%dT%H:%M:%SZ")
 
         if datestr is None:

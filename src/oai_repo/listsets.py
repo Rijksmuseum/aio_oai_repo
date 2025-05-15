@@ -58,16 +58,16 @@ class ListSetsResponse(OAIResponse):
         OAIErrorBadResumptionToken
         OAIErrorNoSetHierarchy
     """
-    def body(self) -> etree.Element:
+    async def body(self) -> etree.Element:
         """Response body"""
         # TODO identifier, cursor, total count, resumption token
-        setspecs, size, unhashed = self.repository.data.list_set_specs()
+        setspecs, size, unhashed = await self.repository.data.list_set_specs()
         if setspecs is None:
             raise OAIErrorNoSetHierarchy("Repository does not support sets.")
 
         xmlb = etree.Element("ListSets")
         for setspec in setspecs:
-            setobj = self.repository.data.get_set(setspec)
+            setobj = await self.repository.data.get_set(setspec)
             xset = etree.SubElement(xmlb, "set")
             xspec = etree.SubElement(xset, "setSpec")
             xspec.text = setobj.spec

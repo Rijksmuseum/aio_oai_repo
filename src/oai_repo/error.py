@@ -18,15 +18,13 @@ class OAIErrorResponse(OAIResponse):
         self.message = str(exc)
         super().__init__(repository)
 
-    def __repr__(self):
-        return f"OAIErrorResponse(code={self.code})"
-
-    def body(self):
-        """Error response body"""
         xmlb = etree.Element("error")
         xmlb.set(b"code", self.code.encode('utf8'))
         xmlb.text = self.message.encode('utf8')
-        return xmlb
+        self.xmlr.append(xmlb)
+
+    def __repr__(self):
+        return f"OAIErrorResponse(code={self.code})"
 
     def __bool__(self):
         """Indicates this response is for a failed request"""

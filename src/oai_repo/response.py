@@ -2,7 +2,7 @@
 Handling OAI-PMH responses
 """
 from __future__ import annotations      # To use non-string type hinting; can remove in Python 3.11
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Self
 from datetime import datetime, timezone
 from lxml import etree
 from .helpers import datestamp_long
@@ -56,14 +56,18 @@ class OAIResponse:
         response_date = response_date if response_date else datetime.now(timezone.utc)
         response_date_elem = etree.SubElement(self.xmlr, "responseDate")
         response_date_elem.text = datestamp_long(response_date)
+    
+    async def initialize(self) -> Self:
         # request element
         request_elem = etree.SubElement(self.xmlr, "request")
-        request_elem.text = self.repository.data.get_identify().base_url
+        identify = await self.repository.data.get_identify()
+        request_elem.text = identify.base_url
         if self and self.request:
             for argk, argv in self.request.args.items():
                 request_elem.set(argk, argv)
         # add body element
-        self.xmlr.append(self.body())
+        self.xmlr.append(await self.body())
+        return self
 
     def __bool__(self):
         """
@@ -78,7 +82,7 @@ class OAIResponse:
         """
         return True
 
-    def body(self) -> etree.Element:
+    async def body(self) -> etree.Element:
         """
         Abstract method to generate OAI response body.
         Returns:

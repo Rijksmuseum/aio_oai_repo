@@ -1,0 +1,20 @@
+trigger:
+  branches:
+    include:
+      - main
+
+resources:
+  repositories:
+    - repository: continuous_deployment
+      type: github
+      name: Rijksmuseum/continuous_deployment
+      endpoint: Rijksmuseum
+
+extends:
+  template: /images_and_packages/publish_image_and_package.yaml@continuous_deployment
+  parameters:
+    componentName: aio_oai_repo
+    runTests: true
+    continueOnTestError: false
+    publishPackage: true
+    publishImage: false

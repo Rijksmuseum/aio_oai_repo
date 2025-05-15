@@ -110,7 +110,7 @@ class DataInterface:
     """
     limit: int = 50
 
-    def get_identify(self) -> Identify:
+    async def get_identify(self) -> Identify:
         """
         Create and return an instantiated Identify object.
         Returns:
@@ -118,7 +118,7 @@ class DataInterface:
         """
         raise NotImplementedError
 
-    def is_valid_identifier(self, identifier: str) -> bool:
+    async def is_valid_identifier(self, identifier: str) -> bool:
         """
         Determine if an identifier string is valid format and exists.
         Args:
@@ -128,7 +128,7 @@ class DataInterface:
         """
         raise NotImplementedError
 
-    def get_metadata_formats(self, identifier: str|None = None) -> list[MetadataFormat]:
+    async def get_metadata_formats(self, identifier: str|None = None) -> list[MetadataFormat]:
         """
         Return a list of metadata prefixes for the identifier. If no identifier
         identifier is passed, then list must contain all possible prefixes for the repository.
@@ -142,7 +142,7 @@ class DataInterface:
         """
         raise NotImplementedError
 
-    def get_record_header(self, identifier: str) -> RecordHeader:
+    async def get_record_header(self, identifier: str) -> RecordHeader:
         """
         Return a RecordHeader instance for the identifier.
         Args:
@@ -152,7 +152,7 @@ class DataInterface:
         """
         raise NotImplementedError
 
-    def get_record_metadata(self, identifier: str, metadataprefix: str) -> lxml.etree._Element|None:
+    async def get_record_metadata(self, identifier: str, metadataprefix: str) -> lxml.etree._Element|None:
         """
         Return a lxml.etree.Element representing the root element of the
         metadata found for the given prefix.
@@ -167,7 +167,7 @@ class DataInterface:
         """
         raise NotImplementedError
 
-    def get_record_abouts(self, identifier: str) -> list[lxml.etree._Element]:
+    async def get_record_abouts(self, identifier: str) -> list[lxml.etree._Element]:
         """
         Return a list of XML elements which will populate the `<about>` tags in GetRecord responses.
         Args:
@@ -179,7 +179,7 @@ class DataInterface:
         """
         raise NotImplementedError
 
-    def list_set_specs(self, identifier: str=None, cursor: int=0) -> tuple:
+    async def list_set_specs(self, identifier: str=None, cursor: int=0) -> tuple:
         """
         Return a list of setSpec string for the given identifier string if provided,
         or the list of all valid setSpec strings for the repository if no identifier is None.
@@ -200,7 +200,7 @@ class DataInterface:
         """
         raise NotImplementedError
 
-    def get_set(self, setspec: str) -> Set:
+    async def get_set(self, setspec: str) -> Set:
         """
         Return an instatiated OAI Set object for the provided setSpec string.
         Args:
@@ -211,7 +211,7 @@ class DataInterface:
         """
         raise NotImplementedError
 
-    def list_identifiers(self,
+    async def list_identifiers(self,
         metadataprefix: str,
         filter_from: datetime = None,
         filter_until: datetime = None,

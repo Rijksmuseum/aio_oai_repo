@@ -73,13 +73,13 @@ class ListMetadataFormatsResponse(OAIResponse):
     def __repr__(self):
         return f"ListMetadataFormatsResponse(identifier={self.request.identifier})"
 
-    def body(self) -> etree.Element:
+    async def body(self) -> etree.Element:
         """Response body"""
         identifier = self.request.identifier
-        if identifier and not self.repository.data.is_valid_identifier(identifier):
+        if identifier and not await self.repository.data.is_valid_identifier(identifier):
             raise OAIErrorIdDoesNotExist("The given identifier does not exist.")
 
-        mdformats = self.repository.data.get_metadata_formats(identifier)
+        mdformats = await self.repository.data.get_metadata_formats(identifier)
         if not mdformats:
             raise OAIErrorNoMetadataFormats("No metadata fomats found for given identifier.")
 

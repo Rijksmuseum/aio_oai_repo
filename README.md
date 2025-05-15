@@ -1,3 +1,6 @@
+This is a fork of version 0.4.2 of https://github.com/MSU-Libraries/oai_repo that changes the signature
+of the interface to implement to be async.
+
 # oai_repo
 The `oai_repo` Python module provides a configurable implementation of an
 [OAI-PMH](http://openarchives.org/OAI/openarchivesprotocol.html) compatible repository.

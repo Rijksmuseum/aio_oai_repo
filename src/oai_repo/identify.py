@@ -107,9 +107,9 @@ class IdentifyResponse(OAIResponse):
     def __repr__(self):
         return "IdentifyResponse()"
 
-    def body(self):
+    async def body(self):
         """Response body"""
-        identify = self.repository.data.get_identify()
+        identify = await self.repository.data.get_identify()
         errors = identify.errors()
         if errors:
             raise OAIRepoInternalException(f"Invalid Identify instance: {errors}")

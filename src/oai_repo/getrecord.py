@@ -76,24 +76,24 @@ class GetRecordResponse(OAIResponse):
         return f"GetRecordResponse(identifier={self.request.identifier},"\
                f"metadataprefix={self.request.metadataprefix})"
 
-    def body(self) -> etree.Element:
+    async def body(self) -> etree.Element:
         """Response body"""
         identifier, metadataprefix = self.request.identifier, self.request.metadataprefix
-        if not self.repository.data.is_valid_identifier(identifier):
+        if not await self.repository.data.is_valid_identifier(identifier):
             raise OAIErrorIdDoesNotExist("The given identifier does not exist.")
 
-        mdformats = self.repository.data.get_metadata_formats(identifier)
+        mdformats = await self.repository.data.get_metadata_formats(identifier)
         if metadataprefix not in [mdf.metadata_prefix for mdf in mdformats]:
             raise OAIErrorCannotDisseminateFormat(
                 "The requested metadataPrefix does not exist for the given identifier."
             )
 
-        granularity = self.repository.data.get_identify().granularity
+        granularity = await self.repository.data.get_identify().granularity
         xmlb = etree.Element("GetRecord")
-        record(self.repository, identifier, metadataprefix, xmlb)
+        await record(self.repository, identifier, metadataprefix, xmlb)
         return xmlb
 
-def header(repository: "OAIRepository", identifier: str, xmlb: etree._Element):
+async def header(repository: "OAIRepository", identifier: str, xmlb: etree._Element):
     """
     Generate and append a <header> OAI element to and XML doc.
     Args:
@@ -103,20 +103,20 @@ def header(repository: "OAIRepository", identifier: str, xmlb: etree._Element):
     Returns:
         A lxml.etree._Element for the root of the header
     """
-    head = repository.data.get_record_header(identifier)
+    head = await repository.data.get_record_header(identifier)
     xhead = etree.SubElement(xmlb, "header")
     xident = etree.SubElement(xhead, "identifier")
     xident.text = head.identifier
     xstamp = etree.SubElement(xhead, "datestamp")
     xstamp.text = granularity_format(
-        repository.data.get_identify().granularity,
+        await repository.data.get_identify().granularity,
         head.datestamp
     ) if isinstance(head.datestamp, datetime) else head.datestamp
     for setspec in head.setspecs:
         xset = etree.SubElement(xhead, "setSpec")
         xset.text = setspec
 
-def record(repository: "OAIRepository", identifier: str, metadataprefix: str, xmlb: etree._Element):
+async def record(repository: "OAIRepository", identifier: str, metadataprefix: str, xmlb: etree._Element):
     """
     Generate and append a <record> OAI element to and XML doc.
     Args:
@@ -128,14 +128,14 @@ def record(repository: "OAIRepository", identifier: str, metadataprefix: str, xm
     """
     xrec = etree.SubElement(xmlb, "record")
     # Header
-    header(repository, identifier, xrec)
+    await header(repository, identifier, xrec)
     # Metadata
     xmeta = etree.SubElement(xrec, "metadata")
     xmeta.append(
-        repository.data.get_record_metadata(identifier, metadataprefix)
+        await repository.data.get_record_metadata(identifier, metadataprefix)
     )
     # About
-    abouts = repository.data.get_record_abouts(identifier)
+    abouts = await repository.data.get_record_abouts(identifier)
     for about in abouts:
         xabout = etree.SubElement(xrec, "about")
         xabout.append(about)

@@ -14,8 +14,8 @@ setuptools.setup(
     long_description_content_type="text/markdown",
     url='https://github.com/Rijksmuseum/aio_oai_repo',
     project_urls={
-        "Forked from": "https://github.com/MSU-Libraries/oai_repo"
-        "Documentation": "https://msu-libraries.github.io/oai_repo/",
+        "Forked from": "https://github.com/MSU-Libraries/oai_repo",
+        "Documentation": "https://msu-libraries.github.io/oai_repo/"
     },
     classifiers=[
         'Intended Audience :: Developers',

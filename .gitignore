@@ -9,3 +9,5 @@ oai_repo.egg-info/
 .coverage
 FIXME
 public/
+.venv
+*.egg-info

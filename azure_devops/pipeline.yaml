@@ -15,5 +15,6 @@ extends:
   parameters:
     componentName: aio_oai_repo
     runTests: false
-    publishPackage: true
+    publishPackage: false
+    publishPackageUV: true
     publishImage: false
